@@ -10,13 +10,15 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use function Laravel\Prompts\select;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
+
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
-
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
 
 class UserResource extends Resource
 {
@@ -31,10 +33,9 @@ class UserResource extends Resource
                 TextInput::make('name')->required(),
                 TextInput::make('email')->required()->email()->unique(User::class, 'email'),
                 TextInput::make('password')->required()->password(),
-                // Select::make('role')->required()->label('Select Role')->options([
-                //     '1' => 'Admin',
-                //     '2' => 'User',
-                // ]),
+                FileUpload::make('avatar')
+                ->disk('public')
+                ->directory('avatars'),
             ]);
     }
 
@@ -43,6 +44,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id'),
+                ImageColumn::make('avatar')->label('Avatar'),
                 TextColumn::make('name'),
                 TextColumn::make('email'),
             ])
